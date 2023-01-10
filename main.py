@@ -14,12 +14,17 @@ with open("proxy.txt") as file:
 
 async def send_request(url: str, rand_proxy: str) -> str:
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, proxy=f"http://{rand_proxy}") as resp:
             return await resp.text(encoding="utf-8")
 
+        async with session.get(url, proxy=f"http://{rand_proxy}") as resp:
 
-async def parse_category(category_url: list):
-    ...
+async def parse_category(category_url: str):
+    random_proxy = random.choice(PROXY_LIST)
+    html_response = await send_request(category_url, random_proxy)
+    soup = BeautifulSoup(html_response, "lxml")
+    pagination_block = soup.find("div", class_="tm-pagination__pages")
+    pages_count = pagination_block.find_all("a", class_="tm-pagination__page")[-1].text.strip()
+
 
 
 async def main():
