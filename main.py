@@ -18,7 +18,6 @@ async def send_request(url: str, rand_proxy: str) -> str:
             return await resp.text(encoding="utf-8")
 
 
-
 async def parse_category(category_url: str):
     random_proxy = random.choice(PROXY_LIST)
     html_response = await send_request(category_url, random_proxy)
@@ -40,8 +39,11 @@ async def parse_category(category_url: str):
             title = info_block.find("span").text.strip()
             link = f"https://{info_block.get('href')}"
 
-            print(link)
-
+            with open("articles.txt", "a") as file:
+                category_name = category_url.split('/')[-1]
+                result_string = f"{category_name} | {title} | {link}\n"
+                file.write(result_string)
+                print(result_string, end='')
 
 
 async def main():
